@@ -1,0 +1,164 @@
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	    <title>HTML5 Advanced Todos</title>
+
+	    <!-- Bootstrap core CSS -->
+	    <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+	    <!-- Custom styles for this template -->
+	    <link href="assets/css/jumbotron-narrow.css" rel="stylesheet">
+
+	    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+	    <!--[if lt IE 9]>
+	      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+	      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+	    <![endif]-->
+	    <link rel="stylesheet" type="text/css" href="assets/css/advanced_todo.css">
+	</head>
+
+  	<body>
+
+    	<div class="container">
+      		<div class="header clearfix">
+        		<h3 class="text-muted">HTML5 Advanced Todos</h3>
+      		</div>
+      		<div class="row marketing">
+        		<div class="col-lg-12">
+        			<h4>Just a Basic Todo List</h4><hr>
+
+							<div id="container">
+
+								<form class="" action="" method="post" name="form1">
+									<input type="text" name="toDoItem" value="" id="toDoItem" autofocus />
+									<input type="button" name="addToDo" value="Add List Item" id="addToDo" >
+        				</form>
+
+								<ul id="theList" class="sortable list">
+								</ul>
+
+								<p id="doClearAll">
+									<a href="#" id="clearAll">Clear All</a>
+								</p>
+
+        			</div> <!-- #container -->
+
+        		</div>
+      		</div>
+
+      		<footer class="footer">
+        		<p>&copy; 2017 HTML5Todos</p>
+      		</footer>
+
+	    </div> <!-- /container -->
+	    <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
+			<script type="text/javascript" src="assets/js/jquery.sortable.js"></script>
+	    <script type="text/javascript">
+
+	    	$(document).ready( function(){
+	    		var newListItem;
+					var newList = true;
+					var theList = $("#theList");
+
+					$("#addToDo").on('click', function(event){
+						event.preventDefault();
+
+						var toDoItem = $("#toDoItem");
+						var theValue = toDoItem.val();
+
+						if(newList == true) {
+							newListItem = '<li><span class="handle"> :: </span> <input class="listItem" value="' + theValue + '"> <a href="#" class="removeListItem" style="display:none;"> X </a></li>';
+							newList = false;
+						} else {
+							newListItem = $("#theList li:last").clone();
+							newListItem.find('input').prop('value', theValue);
+						}
+
+						var theCount = $("#theList li").length + 1;
+
+						if(theCount > 1) {
+							$("#doClearAll").css('display', 'block')
+						}
+						$("#theList").append(newListItem);
+
+						toDoItem.val('');
+						toDoItem.focus();
+
+						$(".sortable").sortable('destroy');
+						$(".sortable").sortable({
+							handle: '.handle'
+						});
+						localStorage.setItem('todoListPlus', theList.html());
+					});
+
+					$('input[type="text"]').on('keydown', function(event){
+						var key = event.charChode ? event.charCode : event.keyCode ? event.keyCode : 0;
+						if(key == 13) {
+							event.preventDefault();
+							var inputs = $(this).closest('form').find(':input:visible');
+							inputs.eq(inputs.index(this) + 1).focus();
+						}
+					});
+
+					$("#theList").on('change', '.listItem', function(event){
+						var currentValue = $(this).val();
+						$(this).prop('value', currentValue);
+						localStorage.setItem('todoListPlus', theList.html());
+					});
+
+					$('.sortable').sortable().bind('sortupdate', function(){
+						localStorage.setItem('todoListPlus', theList.html());
+					});
+
+					$('#theList').on('mouseover', 'li', function(){
+						var $thisA = $(this).find('a');
+						$thisA.css('display', 'block');
+					});
+
+					$('#theList').on('mouseout', 'li', function(){
+						var $thisA = $(this).find('a');
+						$thisA.css('display', 'none');
+					});
+
+					$('#theList').on('click', '.removeListItem', function(event){
+						event.preventDefault();						
+						$(this).parent().remove();
+						localStorage.setItem('todoListPlus', theList.html());
+					});
+
+					$('#doClearAll').on('click', '#clearAll', function(event){
+						event.preventDefault();
+						$("#theList").children().remove();
+						newList = true;
+						$("#toDoItem").val('');
+						$('#doClearAll').css('display', 'none');
+						$('#toDoItem').focus();
+						localStorage.setItem('todoListPlus', theList.html());
+					});
+
+					loadToDo();
+					function loadToDo() {
+						if(localStorage.getItem('todoListPlus')) {
+							theList.html(localStorage.getItem('todoListPlus'));
+						}
+						$(".sortable").sortable('destroy');
+						$(".sortable").sortable({
+							handle: '.handle'
+						});
+						var theCount = $("#theList li").length + 1;
+
+						if(theCount > 1) {
+							$("#doClearAll").css('display', 'block')
+						}
+					}
+
+	    	});
+	    </script>
+
+  </body>
+</html>
