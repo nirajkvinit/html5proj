@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/nirajkvinit/html5proj#readme",
   "dependencies": {
-    "bootstrap": "^3.3.7",
+    "bootstrap": "^4.1.2",
     "jquery": "^3.2.1"
   }
 }
